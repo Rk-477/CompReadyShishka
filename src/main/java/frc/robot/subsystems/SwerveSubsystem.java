@@ -14,12 +14,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 import java.io.File;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import swervelib.parser.SwerveParser;
 import swervelib.SwerveDrive;
+import swervelib.math.SwerveMath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -96,6 +98,31 @@ SwerveDrive  swerveDrive;
 
   public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
     swerveDrive.setChassisSpeeds(chassisSpeeds);
+  }
+
+  /**
+   * Command to drive robot translation from left stick and heading setpoint from right stick.
+   */
+  public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,
+                              DoubleSupplier headingY) {
+    return run(() -> {
+      if (swerveDrive == null) {
+        return;
+      }
+
+      Translation2d scaledInputs = SwerveMath.scaleTranslation(
+          new Translation2d(translationX.getAsDouble(), translationY.getAsDouble()),
+          0.8);
+
+      driveFieldOriented(
+          swerveDrive.swerveController.getTargetSpeeds(
+              scaledInputs.getX(),
+              scaledInputs.getY(),
+              headingX.getAsDouble(),
+              headingY.getAsDouble(),
+              swerveDrive.getOdometryHeading().getRadians(),
+              Constants.maximumSpeed));
+    });
   }
 
   private void setupPathPlanner() {

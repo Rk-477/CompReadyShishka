@@ -10,8 +10,8 @@ import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakePivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import edu.wpi.first.math.MathUtil;
 import swervelib.SwerveInputStream;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -36,34 +36,33 @@ public class RobotContainer {
     private final CommandXboxController m_driverController =
         new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
-    private Command driveFieldOrientedAngularVelocity = Commands.none();
-  
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
       // Configure the trigger bindings
       configureBindings();
       if (drivebase.isReady()) {
-        SwerveInputStream driveAngularVelocity = SwerveInputStream
+        SwerveInputStream driveDirectAngle = SwerveInputStream
             .of(
                 drivebase.getSwerveDrive(),
-                () -> m_driverController.getLeftY() * -1,
-                () -> m_driverController.getLeftX() * -1)
-            .withControllerRotationAxis(m_driverController::getRightX)
+                () -> -m_driverController.getLeftY(),
+                () -> -m_driverController.getLeftX())
+            .withControllerHeadingAxis(m_driverController::getRightX, m_driverController::getRightY)
+            .headingWhile(true)
             .deadband(Constants.OperatorConstants.DEADBAND)
             .scaleTranslation(0.8)
             .allianceRelativeControl(true);
 
-        // Simulator-friendly heading control stream (maps one axis to a full 0..2pi heading circle).
-        SwerveInputStream driveDirectAngleSim = driveAngularVelocity.copy()
-            .withControllerHeadingAxis(
-                () -> Math.sin(m_driverController.getHID().getRawAxis(2) * Math.PI) * (Math.PI * 2),
-                () -> Math.cos(m_driverController.getHID().getRawAxis(2) * Math.PI) * (Math.PI * 2))
-            .headingWhile(true);
+        // Keep this command prepared for later switching.
+        Command driveFieldOrientedSwerveInput = drivebase.driveFieldOriented(driveDirectAngle);
 
-        driveFieldOrientedAngularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
-        Command driveFieldOrientedDirectAngleSim = drivebase.driveFieldOriented(driveDirectAngleSim);
-        drivebase.setDefaultCommand(
-            RobotBase.isSimulation() ? driveFieldOrientedDirectAngleSim : driveFieldOrientedAngularVelocity);
+        // Applies deadbands and uses right stick as desired heading setpoint.
+        Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
+            () -> MathUtil.applyDeadband(m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+            () -> MathUtil.applyDeadband(m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+            () -> m_driverController.getRightX(),
+            () -> m_driverController.getRightY());
+
+        drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
       }
     }
 
