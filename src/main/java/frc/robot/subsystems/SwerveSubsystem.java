@@ -125,6 +125,29 @@ SwerveDrive  swerveDrive;
     });
   }
 
+  /**
+   * Command to drive the robot using translative values and heading as angular velocity.
+   *
+   * @param translationX     Translation in the X direction.
+   * @param translationY     Translation in the Y direction.
+   * @param angularRotationX Rotation of the robot to set
+   * @return Drive command.
+   */
+  public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX) {
+    return run(() -> {
+      double rawRotation = angularRotationX.getAsDouble();
+      double maxAngular = swerveDrive.getMaximumChassisAngularVelocity();
+      double rotationCmd = rawRotation * maxAngular;
+      swerveDrive.drive(
+          new Translation2d(
+              translationX.getAsDouble() * swerveDrive.getMaximumChassisAngularVelocity(),
+              translationY.getAsDouble() * swerveDrive.getMaximumChassisAngularVelocity()),
+          rotationCmd,
+          true,
+          false);
+    });
+  }
+
   private void setupPathPlanner() {
     try {
       RobotConfig config = RobotConfig.fromGUISettings();
