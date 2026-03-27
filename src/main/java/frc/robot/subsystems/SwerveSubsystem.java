@@ -176,6 +176,22 @@ SwerveDrive  swerveDrive;
       swerveDrive.driveFieldOriented(velocity);
     }
   }
+
+  /**
+   * Robot-relative drive command used by vision alignment.
+   */
+  public void drive(double vxMetersPerSecond, double vyMetersPerSecond, double omegaRadiansPerSecond) {
+    if (swerveDrive != null) {
+      swerveDrive.drive(new Translation2d(vxMetersPerSecond, vyMetersPerSecond), omegaRadiansPerSecond, false, false);
+    }
+  }
+
+  public void stop() {
+    if (swerveDrive != null) {
+      swerveDrive.drive(new Translation2d(), 0.0, false, false);
+    }
+  }
+
   public Command driveFieldOriented(Supplier <ChassisSpeeds> velocity) {
     return run (()-> {
       if (swerveDrive != null) {
