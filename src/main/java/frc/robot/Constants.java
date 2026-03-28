@@ -33,12 +33,9 @@ public final class Constants {
 
     // Per-tag target distance table; tune on-robot as needed.
     public static final Map<Integer, Double> TARGET_DISTANCE_METERS_BY_TAG = Map.ofEntries(
-        Map.entry(7, DEFAULT_TARGET_DISTANCE_METERS),
+      
         Map.entry(10, DEFAULT_TARGET_DISTANCE_METERS),
-        Map.entry(12, DEFAULT_TARGET_DISTANCE_METERS),
-        Map.entry(23, DEFAULT_TARGET_DISTANCE_METERS),
-        Map.entry(26, DEFAULT_TARGET_DISTANCE_METERS),
-        Map.entry(28, DEFAULT_TARGET_DISTANCE_METERS));
+        Map.entry(26, DEFAULT_TARGET_DISTANCE_METERS));
   }
 
   public static class OperatorConstants {

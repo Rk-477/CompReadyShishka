@@ -34,6 +34,7 @@ public class RobotContainer {
     private final IntakePivotSubsystem intakePivotSubsystem = new IntakePivotSubsystem();
     // Shooter left/right, tower, conveyor, intake roller CAN IDs from shooter-pid branch.
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem(11, 9, 12, 13, 16);
+    private final AutoAllign autoAllignCommand = new AutoAllign(limelightSubsystem, drivebase);
   
     // Replace with CommandPS4Controller or CommandJoystick if needed
     private final CommandXboxController m_driverController =
@@ -86,7 +87,10 @@ public class RobotContainer {
         .onTrue(new ExampleCommand(m_exampleSubsystem));
 
     // Run AutoAlign on A.
-    m_driverController.a().onTrue(new AutoAllign(limelightSubsystem, drivebase));
+    m_driverController.a().onTrue(autoAllignCommand);
+
+    // Cancel AutoAlign on left trigger.
+    m_driverController.leftTrigger().onTrue(Commands.runOnce(autoAllignCommand::cancel));
 
     // Toggle shooter+tower+conveyor on B.
     m_driverController.b().toggleOnTrue(Commands.startEnd(

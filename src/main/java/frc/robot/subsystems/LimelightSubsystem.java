@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 public class LimelightSubsystem extends SubsystemBase {
   private final NetworkTable limelightTable;
   private final AprilTagFieldLayout aprilTagField =
-      AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+      AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
   private double millisTimeRecorded;
 
   private final NetworkTableEntry tx;

@@ -59,6 +59,12 @@ public class AutoAllign extends Command {
     }
 
     int tagId = limelight.getTargetID();
+    if (!isAllowedTag(tagId)) {
+      drive.stop();
+      Logger.log("AutoAlign: Ignoring unsupported tag ID " + tagId);
+      return;
+    }
+
     double tx = limelight.getX();
     double ty = limelight.getY();
 
@@ -109,6 +115,10 @@ public class AutoAllign extends Command {
         tagId, defaultTargetDistance);
   }
 
+  private boolean isAllowedTag(int tagId) {
+    return AutoAlignConstants.TARGET_DISTANCE_METERS_BY_TAG.containsKey(tagId);
+  }
+
   @Override
   public void end(boolean interrupted) {
     drive.stop();
@@ -118,6 +128,11 @@ public class AutoAllign extends Command {
   @Override
   public boolean isFinished() {
     if (!limelight.hasValidTarget()) {
+      return false;
+    }
+
+    int tagId = limelight.getTargetID();
+    if (!isAllowedTag(tagId)) {
       return false;
     }
 
