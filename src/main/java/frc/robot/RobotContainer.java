@@ -37,7 +37,7 @@ public class RobotContainer {
     private final IntakePivotSubsystem intakePivotSubsystem = new IntakePivotSubsystem();
     // Shooter left/right, tower, conveyor, intake roller CAN IDs from shooter-pid branch.
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem(11, 9, 12, 13, 16);
-    private final AutoAllign autoAllignCommand = new AutoAllign(limelightSubsystem, drivebase);
+    private final AutoAllign autoAllignCommand;
     private final SendableChooser<Command> autonomousChooser = new SendableChooser<>();
     private boolean invertDriveBindings = false;
   
@@ -49,6 +49,15 @@ public class RobotContainer {
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
+      autoAllignCommand = new AutoAllign(
+          limelightSubsystem,
+          drivebase,
+          () ->
+              applyDriveInversion(
+                      MathUtil.applyDeadband(
+                          m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND))
+                  * Constants.maximumSpeed
+                  * 0.8);
       // Configure the trigger bindings
       configureBindings();
       configureAutonomousChooser();
