@@ -146,11 +146,19 @@ public class AutoAllign extends Command {
     if (!isAllowedTag(tagId)) {
       return false;
     }
+    boolean aligned_rotationpid = rotationPID.atSetpoint();
+    Logger.log("Rotation setpoint complete: "+aligned_rotationpid);
 
-    boolean aligned = distancePID.atSetpoint() && rotationPID.atSetpoint();
-    if (aligned) {
+    boolean aligned_distancepid = distancePID.atSetpoint();
+    Logger.log("Distance setpoint complete: "+aligned_distancepid);
+
+    if (aligned_rotationpid && aligned_distancepid) {
       Logger.log("AutoAlign: Alignment complete!");
+      return true;
     }
-    return aligned;
+    else{
+      Logger.log("Issue with alignment");
+    }
+    return false;
   }
 }

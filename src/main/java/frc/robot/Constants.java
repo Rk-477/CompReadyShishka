@@ -34,7 +34,8 @@ public final class Constants {
     public static final double DEFAULT_TAG_HEIGHT_METERS = 1.12;
     public static final double CAMERA_HEIGHT_METERS = 0.434;
     public static final List<Integer> REEF_TAG_IDS =
-        List.of( 10, 26);
+    //other ids to use: 23, 24
+        List.of( 10, 9);
 
     // All reef tags share one tunable stand-off distance.
     public static final Map<Integer, Double> TARGET_DISTANCE_METERS_BY_TAG =
