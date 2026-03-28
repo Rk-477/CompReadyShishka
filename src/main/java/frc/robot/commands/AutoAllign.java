@@ -75,10 +75,15 @@ public class AutoAllign extends Command {
 
     double targetDistance = getTargetDistanceForTag(tagId);
     double currentDistance = calculateDistanceFromTag(ty, tagHeightMeters, targetDistance);
-    Logger.log("Reefdist: "+currentDistance);
+    if (!Double.isFinite(currentDistance)) {
+      drive.stop();
+      Logger.log("AutoAlign: Invalid distance estimate");
+      return;
+    }
 
     double distanceError = currentDistance - targetDistance;
-    double strafeError = tx;
+    // Keep strafe neutral; heading correction is handled by rotation PID on tx.
+    double strafeError = 0.0;
     double rotationError = tx;
 
     double vx = -distancePID.calculate(distanceError, 0);
@@ -107,7 +112,7 @@ public class AutoAllign extends Command {
     double cameraHeightMeters = AutoAlignConstants.CAMERA_HEIGHT_METERS;
 
     double totalAngleRadians = Math.toRadians(cameraAngleDegrees + ty);
-    if (Math.abs(totalAngleRadians) < 0.01) {
+    if (Math.abs(totalAngleRadians) < 1e-3) {
       return fallbackDistanceMeters;
     }
 
