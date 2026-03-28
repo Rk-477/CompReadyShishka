@@ -507,6 +507,7 @@ public class ShooterSubsystem extends SubsystemBase {
         Logger.log("Setting shooter velocity to " + scaledVelocityRPM + " RPM (scaled)");
         leftClosedLoop.setReference(scaledVelocityRPM, ControlType.kVelocity);
         rightClosedLoop.setReference(scaledVelocityRPM, ControlType.kVelocity);
+        towerClosedLoop.setReference(scaledVelocityRPM, ControlType.kVelocity);
         conveyorMotor.set(CONVEYOR_POWER);
     }
 
