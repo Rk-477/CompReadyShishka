@@ -39,6 +39,7 @@ public class RobotContainer {
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem(11, 9, 12, 13, 16);
     private final AutoAllign autoAllignCommand = new AutoAllign(limelightSubsystem, drivebase);
     private final SendableChooser<Command> autonomousChooser = new SendableChooser<>();
+    private boolean invertDriveBindings = false;
   
     // Replace with CommandPS4Controller or CommandJoystick if needed
     private final CommandXboxController m_driverController =
@@ -66,9 +67,11 @@ public class RobotContainer {
 
         // Applies deadbands and uses right stick as desired heading setpoint.
         Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
-            () -> MathUtil.applyDeadband(m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-            () -> MathUtil.applyDeadband(m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-            () -> m_driverController.getRightX());
+            () -> applyDriveInversion(MathUtil.applyDeadband(
+                m_driverController.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND)),
+            () -> applyDriveInversion(MathUtil.applyDeadband(
+                m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND)),
+            () -> applyDriveInversion(m_driverController.getRightX()));
 
         drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
       }
@@ -107,6 +110,12 @@ public class RobotContainer {
     m_driverController.x().onTrue(Commands.runOnce(
         () -> shooterSubsystem.toggleIntakeOnly(0.6),
         shooterSubsystem));
+    
+    // Toggle manual drive inversion on Y for alliance-side perspective changes.
+    m_driverController.y().onTrue(Commands.runOnce(() -> {
+      invertDriveBindings = !invertDriveBindings;
+      SmartDashboard.putBoolean("Drive Controls Inverted", invertDriveBindings);
+    }));
 
     // Move intake pivot down on right trigger.
     m_driverController.rightTrigger().onTrue(Commands.runOnce(
@@ -123,7 +132,12 @@ public class RobotContainer {
     autonomousChooser.setDefaultOption("Middle", AutonomousSequences.middle(drivebase, shooterSubsystem));
     autonomousChooser.addOption("Left", AutonomousSequences.left(drivebase, shooterSubsystem));
     autonomousChooser.addOption("Right", AutonomousSequences.right(drivebase, shooterSubsystem));
+    SmartDashboard.putBoolean("Drive Controls Inverted", invertDriveBindings);
     SmartDashboard.putData("Autonomous", autonomousChooser);
+  }
+
+  private double applyDriveInversion(double value) {
+    return invertDriveBindings ? -value : value;
   }
 
   /**

@@ -75,6 +75,7 @@ public class AutoAllign extends Command {
 
     double targetDistance = getTargetDistanceForTag(tagId);
     double currentDistance = calculateDistanceFromTag(ty, tagHeightMeters, targetDistance);
+    Logger.log("Reefdist: "+currentDistance);
 
     double distanceError = currentDistance - targetDistance;
     double strafeError = tx;
