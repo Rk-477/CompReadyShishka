@@ -58,7 +58,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private static final double CONVEYOR_POWER = 0.75;
 
     // PID constants for shooter velocity control - aggressive tuning for faster response
-    private static final double SHOOTER_P = 0.02;
+    private static final double SHOOTER_P = 0.012;
     private static final double SHOOTER_I = 0.0;
     private static final double SHOOTER_D = 0.0;
 
