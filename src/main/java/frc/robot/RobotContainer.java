@@ -44,6 +44,8 @@ public class RobotContainer {
     // Replace with CommandPS4Controller or CommandJoystick if needed
     private final CommandXboxController m_driverController =
         new CommandXboxController(OperatorConstants.kDriverControllerPort);
+    private final CommandXboxController m_operatorController =
+        new CommandXboxController(OperatorConstants.kOperatorControllerPort);
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -96,18 +98,20 @@ public class RobotContainer {
 
     // Run AutoAlign on A.
     m_driverController.a().onTrue(autoAllignCommand);
+    m_operatorController.a().onTrue(autoAllignCommand);
 
     // Cancel AutoAlign on left trigger.
     m_driverController.leftTrigger().onTrue(Commands.runOnce(autoAllignCommand::cancel));
+    m_operatorController.leftTrigger().onTrue(Commands.runOnce(autoAllignCommand::cancel));
 
-    // Toggle shooter+tower+conveyor on B.
-    m_driverController.b().toggleOnTrue(Commands.startEnd(
-        () -> shooterSubsystem.setShooterPower(.85),
+    // Toggle shooter+tower+conveyor on B (operator controller).
+    m_operatorController.b().toggleOnTrue(Commands.startEnd(
+        () -> shooterSubsystem.shootWithPID(),
         () -> shooterSubsystem.stop(),
         shooterSubsystem));
 
-    // Toggle intake roller on X.
-    m_driverController.x().onTrue(Commands.runOnce(
+    // Toggle intake roller on X (operator controller).
+    m_operatorController.x().onTrue(Commands.runOnce(
         () -> shooterSubsystem.toggleIntakeOnly(0.6),
         shooterSubsystem));
     
@@ -117,13 +121,13 @@ public class RobotContainer {
       SmartDashboard.putBoolean("Drive Controls Inverted", invertDriveBindings);
     }));
 
-    // Move intake pivot down on right trigger.
-    m_driverController.rightTrigger().onTrue(Commands.runOnce(
+    // Move intake pivot down on right trigger (operator controller).
+    m_operatorController.rightTrigger().onTrue(Commands.runOnce(
         intakePivotSubsystem::moveDown,
         intakePivotSubsystem));
 
-    // Move intake pivot up on left bumper.
-    m_driverController.leftBumper().onTrue(Commands.runOnce(
+    // Move intake pivot up on left bumper (operator controller).
+    m_operatorController.leftBumper().onTrue(Commands.runOnce(
         intakePivotSubsystem::moveUp,
         intakePivotSubsystem));
   }
