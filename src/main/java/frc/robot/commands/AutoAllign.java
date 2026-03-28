@@ -77,25 +77,26 @@ public class AutoAllign extends Command {
     double currentDistance = calculateDistanceFromTag(ty, tagHeightMeters, targetDistance);
     if (!Double.isFinite(currentDistance)) {
       drive.stop();
-      Logger.log("AutoAlign: Invalid distance estimate");
+      Logger.log("AutoAlign: Invalid distance estimate... dist: "+currentDistance);
       return;
     }
 
-    double distanceError = currentDistance - targetDistance;
     // Keep strafe neutral; heading correction is handled by rotation PID on tx.
     double strafeError = 0.0;
-    double rotationError = tx;
 
-    double vx = -distancePID.calculate(distanceError, 0);
-    double vy = -strafePID.calculate(strafeError, 0);
-    double omega = -rotationPID.calculate(rotationError, 0);
+    // Adjust this value as needed (invert if there is an issue )
+    double vx = distancePID.calculate(currentDistance, targetDistance);
+    double vy = strafePID.calculate(strafeError, 0.0);
+    // Limelight tx is positive when target is right; rotating right should be negative omega.
+    double omega = rotationPID.calculate(tx, 0.0);
 
     vx = MathUtil.clamp(vx, -MAX_DRIVE_SPEED, MAX_DRIVE_SPEED);
     vy = MathUtil.clamp(vy, -MAX_DRIVE_SPEED, MAX_DRIVE_SPEED);
     omega = MathUtil.clamp(omega, -MAX_ROTATION_SPEED, MAX_ROTATION_SPEED);
 
     //error log
-    Logger.log("Distance Error "+ distanceError);
+    double distanceError = currentDistance - targetDistance;
+    Logger.log("Distance Error " + distanceError);
 
     Logger.log(
         String.format(
@@ -113,7 +114,7 @@ public class AutoAllign extends Command {
 
     double totalAngleRadians = Math.toRadians(cameraAngleDegrees + ty);
     if (Math.abs(totalAngleRadians) < 1e-3) {
-      return fallbackDistanceMeters;
+      return Double.NaN;
     }
 
     double distance = (tagHeightMeters - cameraHeightMeters) / Math.tan(totalAngleRadians);
@@ -146,7 +147,7 @@ public class AutoAllign extends Command {
       return false;
     }
 
-    boolean aligned = distancePID.atSetpoint() && strafePID.atSetpoint() && rotationPID.atSetpoint();
+    boolean aligned = distancePID.atSetpoint() && rotationPID.atSetpoint();
     if (aligned) {
       Logger.log("AutoAlign: Alignment complete!");
     }

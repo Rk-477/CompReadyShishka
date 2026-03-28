@@ -68,7 +68,7 @@ public class LimelightSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Limelight Y", currentY);
     SmartDashboard.putNumber("Limelight Area", currentArea);
     SmartDashboard.putBoolean("Limelight Has Target", currentTarget > 0.5);
-    SmartDashboard.putNumber("Limelight distance", getDistanceFromTag(1.6, -getX()));
+    SmartDashboard.putNumber("Limelight distance", getDistanceFromTag(1.6, getY()));
     SmartDashboard.putNumber("Limelight Tag ID", getTargetID());
 
     Pose3d botPose = getBotPose3d();
@@ -158,9 +158,13 @@ public class LimelightSubsystem extends SubsystemBase {
     return millisTimeRecorded;
   }
 
-  public double getDistanceFromTag(double tagHeight, double tagYDiff) {
+  public double getDistanceFromTag(double tagHeight, double tagYDegrees) {
     double heightDiff = tagHeight - LimelightConstants.kCameraToRobot.getZ();
-    return heightDiff / Math.tan(Math.toRadians(-getX()));
+    double angleRadians = Math.toRadians(tagYDegrees);
+    if (Math.abs(angleRadians) < 1e-3) {
+      return Double.NaN;
+    }
+    return Math.abs(heightDiff / Math.tan(angleRadians));
   }
   
 
@@ -175,7 +179,10 @@ public class LimelightSubsystem extends SubsystemBase {
     }
 
     double yaw = robotRotation2d.getRadians();
-    double distance = getDistanceFromTag(tag.getZ(), -getX());
+    double distance = getDistanceFromTag(tag.getZ(), getY());
+    if (!Double.isFinite(distance)) {
+      return null;
+    }
     double beta = yaw - Math.toRadians(getY());
     double x = Math.cos(beta) * distance;
     double y = Math.sin(beta) * distance;
