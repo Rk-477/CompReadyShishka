@@ -21,7 +21,7 @@ public final class Constants {
     private LimelightConstants() {}
 
     // Camera pose relative to robot origin (meters).
-    public static final Translation3d kCameraToRobot = new Translation3d(0.0, -0.064, 0.864);
+    public static final Translation3d kCameraToRobot = new Translation3d(0.0, -0.064, 0.434);
   }
 
   public static final class AutoAlignConstants {

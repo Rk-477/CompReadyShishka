@@ -15,6 +15,7 @@ import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.AutoAlignConstants;
 import frc.robot.Constants.LimelightConstants;
 import java.util.function.Supplier;
 
@@ -68,7 +69,7 @@ public class LimelightSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Limelight Y", currentY);
     SmartDashboard.putNumber("Limelight Area", currentArea);
     SmartDashboard.putBoolean("Limelight Has Target", currentTarget > 0.5);
-    SmartDashboard.putNumber("Limelight distance", getDistanceFromTag(1.6, -getX()));
+    SmartDashboard.putNumber("Limelight distance", getDistanceFromTag(1.6, getY()));
     SmartDashboard.putNumber("Limelight Tag ID", getTargetID());
 
     Pose3d botPose = getBotPose3d();
@@ -158,9 +159,13 @@ public class LimelightSubsystem extends SubsystemBase {
     return millisTimeRecorded;
   }
 
-  public double getDistanceFromTag(double tagHeight, double tagYDiff) {
-    double heightDiff = tagHeight - LimelightConstants.kCameraToRobot.getZ();
-    return heightDiff / Math.tan(Math.toRadians(-getX()));
+  public double getDistanceFromTag(double tagHeight, double tagYDegrees) {
+    double heightDiff = tagHeight - AutoAlignConstants.CAMERA_HEIGHT_METERS;
+    double angleRadians = Math.toRadians(tagYDegrees);
+    if (Math.abs(angleRadians) < 1e-3) {
+      return Double.NaN;
+    }
+    return Math.abs(heightDiff / Math.tan(angleRadians));
   }
 
   public synchronized Pose2d getPose(Rotation2d robotRotation2d) {
@@ -174,7 +179,10 @@ public class LimelightSubsystem extends SubsystemBase {
     }
 
     double yaw = robotRotation2d.getRadians();
-    double distance = getDistanceFromTag(tag.getZ(), -getX());
+    double distance = getDistanceFromTag(tag.getZ(), getY());
+    if (!Double.isFinite(distance)) {
+      return null;
+    }
     double beta = yaw - Math.toRadians(getY());
     double x = Math.cos(beta) * distance;
     double y = Math.sin(beta) * distance;

@@ -88,6 +88,9 @@ public class AutoAllign extends Command {
     vy = MathUtil.clamp(vy, -MAX_DRIVE_SPEED, MAX_DRIVE_SPEED);
     omega = MathUtil.clamp(omega, -MAX_ROTATION_SPEED, MAX_ROTATION_SPEED);
 
+    //error log
+    Logger.log("Distance Error "+ distanceError);
+
     Logger.log(
         String.format(
             "AutoAlign: tag=%d, tagZ=%.2f, target=%.2f, dist=%.2f, err=%.2f, tx=%.1f, vx=%.2f, vy=%.2f, omega=%.2f",
@@ -95,6 +98,7 @@ public class AutoAllign extends Command {
 
     drive.drive(vx, vy, omega);
   }
+
 
   private double calculateDistanceFromTag(
       double ty, double tagHeightMeters, double fallbackDistanceMeters) {
