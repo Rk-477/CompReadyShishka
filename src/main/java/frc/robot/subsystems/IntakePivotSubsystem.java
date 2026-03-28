@@ -20,6 +20,7 @@ public class IntakePivotSubsystem extends SubsystemBase {
     private static final double PIVOT_UP_DURATION_SEC = 0.5;
     private static final double PIVOT_POWER_DOWN = 0.30;
     private static final double PIVOT_POWER_UP = -0.20;
+    private static final double PIVOT_POWER_HOLD_DOWN = 0.08;
     private static final int PIVOT_CURRENT_LIMIT = 40;
 
     private final SparkMax pivotMotor;
@@ -78,8 +79,25 @@ public class IntakePivotSubsystem extends SubsystemBase {
         startMove(true, PIVOT_DOWN_DURATION_SEC);
     }
 
+    public void moveDownFor(double durationSec) {
+        startMove(true, durationSec);
+    }
+
     public void moveUp() {
         startMove(false, PIVOT_UP_DURATION_SEC);
+    }
+
+    public void moveUpFor(double durationSec) {
+        startMove(false, durationSec);
+    }
+
+    /**
+     * Apply a low continuous down-hold power to resist intake lift without high stress.
+     * Intended for while-held button behavior.
+     */
+    public void holdDownSoft() {
+        enabled = false;
+        pivotMotor.set(MathUtil.clamp(PIVOT_POWER_HOLD_DOWN, -1.0, 1.0));
     }
 
     public void stop() {

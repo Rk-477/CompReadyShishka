@@ -126,6 +126,14 @@ public class RobotContainer {
         intakePivotSubsystem::moveDown,
         intakePivotSubsystem));
 
+    // Gently hold intake pivot down while right bumper is held.
+    m_operatorController.rightBumper().whileTrue(Commands.run(
+        intakePivotSubsystem::holdDownSoft,
+        intakePivotSubsystem));
+    m_operatorController.rightBumper().onFalse(Commands.runOnce(
+        intakePivotSubsystem::stop,
+        intakePivotSubsystem));
+
     // Move intake pivot up on left bumper (operator controller).
     m_operatorController.leftBumper().onTrue(Commands.runOnce(
         intakePivotSubsystem::moveUp,
