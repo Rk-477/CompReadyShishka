@@ -2,11 +2,13 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public final class AutonomousSequences {
-  private static final double AUTO_BACKUP_SPEED = -0.28;
+  private static final double TELEOP_MAX_STICK_SCALE = 0.8;
+  private static final double AUTO_BACKUP_SPEED = -(Constants.maximumSpeed * TELEOP_MAX_STICK_SCALE);
   private static final double AUTO_BACKUP_TIME_SEC = 1.35;
   private static final double AUTO_SMALL_TURN_SPEED = 0.20;
   private static final double AUTO_SMALL_TURN_TIME_SEC = 0.10;
