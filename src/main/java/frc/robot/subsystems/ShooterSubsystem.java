@@ -102,9 +102,9 @@ public class ShooterSubsystem extends SubsystemBase {
     private static final double OUTTAKE_POWER = -0.6;
     private static final double INTAKE_POWER = 0.85;
     private static final int TOWER_CURRENT_LIMIT = 40; // Amps
-    private static final int CONVEYOR_CURRENT_LIMIT = 15; // Amps
+    private static final int CONVEYOR_CURRENT_LIMIT = 20; // Amps
     private static final int SHOOTER_CURRENT_LIMIT = 35; // Amps
-    private static final int INTAKE_CURRENT_LIMIT = 30; // Amps
+    private static final int INTAKE_CURRENT_LIMIT = 3; // Amps
     private static final double SHOOT_DURATION = 2.0; // seconds
 
     // telemetry timer
@@ -185,7 +185,7 @@ public class ShooterSubsystem extends SubsystemBase {
             .idleMode(IdleMode.kCoast)
             .inverted(true)
             .smartCurrentLimit(CONVEYOR_CURRENT_LIMIT)
-            .openLoopRampRate(0.05);
+            .openLoopRampRate(0.02);
 
         conveyorMotor.configure(
             conveyorConfig,

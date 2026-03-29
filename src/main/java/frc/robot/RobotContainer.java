@@ -119,9 +119,10 @@ public class RobotContainer {
         () -> shooterSubsystem.stop(),
         shooterSubsystem));
 
-    // Toggle intake roller on X (operator controller).
-    m_operatorController.x().onTrue(Commands.runOnce(
-        () -> shooterSubsystem.toggleIntakeOnly(0.6),
+    // Toggle intake + conveyor on X (operator controller).
+    m_operatorController.x().toggleOnTrue(Commands.startEnd(
+        shooterSubsystem::runIntakeAndConveyor,
+        shooterSubsystem::stopIntakeAndConveyor,
         shooterSubsystem));
 
     // Run intake + conveyor in reverse while up arrow is held (jam clear).
