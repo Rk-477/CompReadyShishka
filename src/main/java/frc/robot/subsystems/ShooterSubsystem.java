@@ -67,7 +67,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // Aggressive tuning for faster spin-up and higher velocity
     private static final double FF_kS = 0.2;     // Static friction (volts) - higher for faster startup
     private static final double FF_kV = 0.118;   // Velocity gain - slightly lower to allow higher speeds
-    private static final double FF_kA = 0.03;    // Acceleration gain for faster spin-up
+    private static final double FF_kA = 0.01;    // Acceleration gain for faster spin-up
     private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(FF_kS, FF_kV, FF_kA);
 
     // Shooter wheel configuration
@@ -100,7 +100,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private static final double L4_SHOOTING_POWER = 0.90;
     private static final double SHOOTING_POWER = 0.90;
     private static final double OUTTAKE_POWER = -0.6;
-    private static final double INTAKE_POWER = 0.6;
+    private static final double INTAKE_POWER = 0.85;
     private static final int TOWER_CURRENT_LIMIT = 40; // Amps
     private static final int CONVEYOR_CURRENT_LIMIT = 15; // Amps
     private static final int SHOOTER_CURRENT_LIMIT = 35; // Amps
