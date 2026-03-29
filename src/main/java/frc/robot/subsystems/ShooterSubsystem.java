@@ -42,16 +42,6 @@ public class ShooterSubsystem extends SubsystemBase {
     private final SparkClosedLoopController towerClosedLoop;
 
 
-
-
-
-
-
-
-
-
-
-
     
     // Feed power into shooter wheels. Lower values reduce "pop-up" at entry and flatten flight path.
     private static final double TOWER_POWER = 1;
@@ -109,6 +99,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // Motor configuration constants
     private static final double L4_SHOOTING_POWER = 0.90;
     private static final double SHOOTING_POWER = 0.90;
+    private static final double OUTTAKE_POWER = -0.6;
     private static final double INTAKE_POWER = 0.6;
     private static final int TOWER_CURRENT_LIMIT = 40; // Amps
     private static final int CONVEYOR_CURRENT_LIMIT = 15; // Amps
@@ -451,6 +442,13 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public void runIntakeAndConveyor() {
         runIntakeAndConveyor(INTAKE_POWER);
+    }
+
+    /**
+     * Run intake + conveyor in reverse to clear jams.
+     */
+    public void reverseIntakeAndConveyor() {
+        runIntakeAndConveyor(OUTTAKE_POWER);
     }
 
     /**

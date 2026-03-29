@@ -123,6 +123,16 @@ public class RobotContainer {
     m_operatorController.x().onTrue(Commands.runOnce(
         () -> shooterSubsystem.toggleIntakeOnly(0.6),
         shooterSubsystem));
+
+    // Run intake + conveyor in reverse while up arrow is held (jam clear).
+    //adjust as needed
+    /*
+    m_operatorController.povUp().whileTrue(Commands.run(
+      shooterSubsystem::reverseIntakeAndConveyor, shooterSubsystem));
+
+    m_operatorController.povUp().onFalse(Commands.runOnce(
+      shooterSubsystem::stopIntakeAndConveyor, shooterSubsystem));
+    */
     
     // Toggle manual drive inversion on Y for alliance-side perspective changes.
     m_driverController.y().onTrue(Commands.runOnce(() -> {
