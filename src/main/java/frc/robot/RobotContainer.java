@@ -57,7 +57,7 @@ public class RobotContainer {
                       MathUtil.applyDeadband(
                           m_driverController.getLeftX(), OperatorConstants.LEFT_X_DEADBAND))
                   * Constants.maximumSpeed
-                  * 0.8);
+                  * 0.85);
       // Configure the trigger bindings
       configureBindings();
       configureAutonomousChooser();
